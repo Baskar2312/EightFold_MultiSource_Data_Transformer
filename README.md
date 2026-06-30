@@ -72,16 +72,16 @@ In modern recruitment and HR operations, candidate records originate from divers
 
 ### 1. Merge & Confidence Rules
 
-| Field             | Match Condition              | Confidence Score               | Provenance / Source |
-| :---------------- | :--------------------------- | :----------------------------- | :------------------ |
-| **Skill**         | Appears in both Recruiter Notes & CSV | `0.95`                         | `["RECRUITER_NOTES", "CSV"]` |
-| **Skill**         | Appears in Recruiter Notes only       | `0.80`                         | `["RECRUITER_NOTES"]`        |
-| **Skill**         | Appears in CSV only                   | `0.75`                         | `["CSV"]`           |
-| **Email / Phone** | Present in both sources               | `0.95`                         | `["RECRUITER_NOTES", "CSV"]` |
-| **Email / Phone** | Present in single source              | `0.80` (Recruiter Notes) / `0.75` (CSV) | Single Source       |
-| **Headline**      | Exact match                           | `0.95`                         | Both Sources        |
-| **Headline**      | Conflict (Disagreement)               | `0.80` (Selected Recruiter Notes)       | Conflict Recorded   |
-| **Name**          | Exact / Partial match        | `0.95` / `0.80`                | Both Sources        |
+| Field             | Match Condition                       | Confidence Score                        | Provenance / Source          |
+| :---------------- | :------------------------------------ | :-------------------------------------- | :--------------------------- |
+| **Skill**         | Appears in both Recruiter Notes & CSV | `0.95`                                  | `["RECRUITER_NOTES", "CSV"]` |
+| **Skill**         | Appears in Recruiter Notes only       | `0.80`                                  | `["RECRUITER_NOTES"]`        |
+| **Skill**         | Appears in CSV only                   | `0.75`                                  | `["CSV"]`                    |
+| **Email / Phone** | Present in both sources               | `0.95`                                  | `["RECRUITER_NOTES", "CSV"]` |
+| **Email / Phone** | Present in single source              | `0.80` (Recruiter Notes) / `0.75` (CSV) | Single Source                |
+| **Headline**      | Exact match                           | `0.95`                                  | Both Sources                 |
+| **Headline**      | Conflict (Disagreement)               | `0.80` (Selected Recruiter Notes)       | Conflict Recorded            |
+| **Name**          | Exact / Partial match                 | `0.95` / `0.80`                         | Both Sources                 |
 
 ### 2. Conflict Tracking
 
@@ -155,12 +155,12 @@ _Access the Web UI at `http://localhost:5173`._
 Pre-configured sample files are located in the `sample-data/` folder:
 
 1. `sample-data/sample_candidate.csv`
-2. `sample-data/sample_resume.pdf` (Recruiter Notes PDF)
+2. `sample-data/sample_recruiter_notes.pdf` (Recruiter Notes PDF)
 
 ### Quick Upload Demo:
 
 1. Open `http://localhost:5173/upload`.
-2. Select `sample_resume.pdf` for Recruiter Notes PDF.
+2. Select `sample_recruiter_notes.pdf` for Recruiter Notes PDF.
 3. Select `sample_candidate.csv` for CSV File.
 4. Click **Upload & Process**.
 5. Explore the generated canonical profile, confidence meters, provenance log, and conflict resolution details.
