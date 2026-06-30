@@ -1,0 +1,7 @@
+Baskar S
+Java Full Stack Developer
+Email: baskar@gmail.com
+Phone: +91 98765 43210
+Skills: Java, Spring Boot, React, MySQL
+Education: B.E Computer Science
+Experience: Built REST APIs using Spring Boot and MySQL
