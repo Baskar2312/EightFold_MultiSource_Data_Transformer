@@ -2,17 +2,17 @@
 
 An internal candidate data normalization tool built with **Spring Boot**, **React + Vite**, and **MySQL**.
 
-The system accepts unstructured candidate resumes (PDF) alongside structured system records (CSV), parses both files, normalizes data fields, resolves discrepancies, assigns confidence scores, tracks data provenance, and creates a consolidated **Canonical Candidate Profile**.
+The system accepts unstructured candidate recruiter notes (PDF) alongside structured system records (CSV), parses both files, normalizes data fields, resolves discrepancies, assigns confidence scores, tracks data provenance, and creates a consolidated **Canonical Candidate Profile**.
 
 ---
 
 ## 📌 Problem Statement & Context
 
-In modern recruitment and HR operations, candidate records originate from diverse channels (job boards, agency submissions, internal spreadsheets, and direct resume uploads). This leads to several challenges:
+In modern recruitment and HR operations, candidate records originate from diverse channels (job boards, agency submissions, internal spreadsheets, and direct recruiter note uploads). This leads to several challenges:
 
 - **Data Fragmentation**: Candidate details exist across multiple formats and systems.
 - **Inconsistent Formatting**: Email cases, phone formats, and skill names vary widely (e.g., `ReactJS` vs `React`, `+91 9876543210` vs `9876543210`).
-- **Data Discrepancies**: The job title on a resume may differ from the role submitted in a recruiter spreadsheet.
+- **Data Discrepancies**: The job title in recruiter notes may differ from the role submitted in a recruiter spreadsheet.
 
 **Candidate Profile Builder** solves this by providing an automated rule-based ingestion and normalization engine that creates a transparent, auditable, single source of truth for candidate data.
 
@@ -48,9 +48,9 @@ In modern recruitment and HR operations, candidate records originate from divers
 
 ## 🔄 Core Data Processing Pipeline
 
-1. **Upload**: User uploads a Candidate Resume (`.pdf`) and Data File (`.csv`).
+1. **Upload**: User uploads Candidate Recruiter Notes (`.pdf`) and a Data File (`.csv`).
 2. **Parsing**:
-   - `ResumeParserService` uses Apache PDFBox to extract text and regex rules to discover Name, Emails, Phones, Headline, Skills, Education, and Experience.
+   - The recruiter notes parser uses Apache PDFBox to extract text and regex rules to discover Name, Emails, Phones, Headline, Skills, Education, and Experience.
    - `CsvParserService` uses Apache Commons CSV to extract mapped candidate columns (`name`, `email`, `phone`, `title`, `skills`).
 3. **Normalization**:
    - **Emails**: Trimmed and lowercased.
@@ -60,7 +60,7 @@ In modern recruitment and HR operations, candidate records originate from divers
 4. **Merging & Conflict Resolution**:
    - Emails and Phones are merged and deduplicated.
    - Skills are combined across sources.
-   - Discrepancies in Name or Headline trigger conflict records (preferring self-described resume data).
+   - Discrepancies in Name or Headline trigger conflict records (preferring self-described recruiter notes data).
 5. **Confidence Scoring & Provenance Tracking**:
    - Each extracted field is assigned a confidence score and provenance trail.
    - Overall confidence is calculated dynamically.
@@ -74,21 +74,21 @@ In modern recruitment and HR operations, candidate records originate from divers
 
 | Field             | Match Condition              | Confidence Score               | Provenance / Source |
 | :---------------- | :--------------------------- | :----------------------------- | :------------------ |
-| **Skill**         | Appears in both Resume & CSV | `0.95`                         | `["RESUME", "CSV"]` |
-| **Skill**         | Appears in Resume only       | `0.80`                         | `["RESUME"]`        |
-| **Skill**         | Appears in CSV only          | `0.75`                         | `["CSV"]`           |
-| **Email / Phone** | Present in both sources      | `0.95`                         | `["RESUME", "CSV"]` |
-| **Email / Phone** | Present in single source     | `0.80` (Resume) / `0.75` (CSV) | Single Source       |
-| **Headline**      | Exact match                  | `0.95`                         | Both Sources        |
-| **Headline**      | Conflict (Disagreement)      | `0.80` (Selected Resume)       | Conflict Recorded   |
+| **Skill**         | Appears in both Recruiter Notes & CSV | `0.95`                         | `["RECRUITER_NOTES", "CSV"]` |
+| **Skill**         | Appears in Recruiter Notes only       | `0.80`                         | `["RECRUITER_NOTES"]`        |
+| **Skill**         | Appears in CSV only                   | `0.75`                         | `["CSV"]`           |
+| **Email / Phone** | Present in both sources               | `0.95`                         | `["RECRUITER_NOTES", "CSV"]` |
+| **Email / Phone** | Present in single source              | `0.80` (Recruiter Notes) / `0.75` (CSV) | Single Source       |
+| **Headline**      | Exact match                           | `0.95`                         | Both Sources        |
+| **Headline**      | Conflict (Disagreement)               | `0.80` (Selected Recruiter Notes)       | Conflict Recorded   |
 | **Name**          | Exact / Partial match        | `0.95` / `0.80`                | Both Sources        |
 
 ### 2. Conflict Tracking
 
-When sources disagree (e.g., Resume Headline: `Java Full Stack Developer` vs. CSV Title: `Java Developer`), a conflict record is generated:
+When sources disagree (e.g., Recruiter Notes Headline: `Java Full Stack Developer` vs. CSV Title: `Java Developer`), a conflict record is generated:
 
 - `fieldName`: Field in conflict (e.g., `headline`)
-- `resumeValue`: Raw value from resume
+- `recruiterNotesValue`: Raw value from recruiter notes
 - `csvValue`: Raw value from CSV
 - `selectedValue`: Value chosen for canonical profile
 - `reason`: Explanation of resolution logic
@@ -100,7 +100,7 @@ When sources disagree (e.g., Resume Headline: `Java Full Stack Developer` vs. CS
 ### 1. File Upload & Normalization
 
 - **POST** `/api/candidates/upload`
-  - **Form Data**: `resumeFile` (PDF), `csvFile` (CSV)
+  - **Form Data**: `resumeFile` (Recruiter Notes PDF), `csvFile` (CSV)
   - **Response**: `UploadResponse` containing canonical profile ID and structured data.
 
 ### 2. Candidate Retrieval
